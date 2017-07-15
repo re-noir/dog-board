@@ -3,7 +3,6 @@
             [ajax.core :refer [GET POST json-response-format]]
             [dog-board.infinite-scroll :as i]))
 
-
 (declare dogs)
 (declare Table)
 (declare Row)
@@ -27,7 +26,6 @@
 (defn Table [data col-options]
   [:table.table
    [:thead
-    [:tr [:td "Foo"]]
     [:tr
      (map (fn [col-option]
             [:th (:attr col-option)
