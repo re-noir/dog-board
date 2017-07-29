@@ -19,5 +19,7 @@
                          :asset-path "js/out"
                          :optimizations :none
                          :pretty-print true}}]}
-  :main dog-board.server)
+  :main dog-board.server
+  :aot
+  :all)
 

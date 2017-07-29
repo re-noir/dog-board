@@ -1,6 +1,7 @@
 (ns dog-board.server
   (:require [noir.server :as server]
-            [korma.db :refer :all]))
+            [korma.db :refer :all])
+  (:gen-class))
 
 
 (defdb dev (mysql {:host "localhost"
@@ -17,12 +18,4 @@
         port (Integer. (get (System/getenv) "PORT" "9090"))]
     (server/start port {:mode mode
                         :ns 'dog-board})))
-
-
-
-
-
-
-
-
 
