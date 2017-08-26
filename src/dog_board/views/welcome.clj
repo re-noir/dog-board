@@ -198,3 +198,7 @@
            [:td (:id dog)]
            [:td (:name dog)]
            [:td (:description dog)]]))]]]))
+
+^{:a 1}
+(defn foo []
+  (println "hello"))
