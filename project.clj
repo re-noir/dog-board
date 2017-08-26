@@ -5,6 +5,7 @@
                  [org.clojure/core.async "0.3.442"]
                  [noir "1.3.0-beta3"]
                  [korma "0.4.3"]
+                 [buddy "1.3.0"]
                  [reagent "0.6.2"]
                  [cljs-ajax "0.6.0"]
                  [org.clojure/clojurescript "1.9.473"]]
@@ -20,6 +21,5 @@
                          :optimizations :none
                          :pretty-print true}}]}
   :main dog-board.server
-  :aot
-  :all)
+  :aot [dog-board.server])
 

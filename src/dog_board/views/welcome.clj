@@ -4,10 +4,65 @@
             [korma.core :rename {update kupdate}
              :refer :all]
             [hiccup.page :refer [include-js]]
-            [noir.response])
+            [noir.response]
+            [noir.server]
+            [buddy.hashers]
+            [clojure.pprint])
   (:use [noir.core :only [defpage parse-args]]))
 
+(defn wrap-utf-8 
+  "Adds the 'charset=utf-8' clause onto the content type declaration, 
+  allowing pages to display all utf-8 characters."
+  [handler]
+  (fn [request]
+    (let [resp (handler request)
+          ct (get-in resp [:headers "Content-Type"])
+          neue-ct "foo foo"
+          rest (assoc-in resp [:headers "x-foo"] neue-ct)]
+      (clojure.pprint/pprint rest)
+      rest)))
+          
+
+;; (noir.server/add-middleware wrap-utf-8)
+
 (defentity dog)
+(defentity user)
+
+(noir.core/pre-route "/private/*" {}
+                     (when (empty? (noir.session/get :session:user))
+                       (throw (java.lang.Exception. "No session"))))
+
+
+
+             
+
+(defpage "/hello" []
+  (common/layout
+   :content
+   [[:div
+     [:h1 "Hello"]
+     [:form {:action "/login" :method "post"}
+      [:input.form-control {:name "username" :placeholder "ID"}]
+      [:input.form-control {:name "password" :type "password" :placeholder "Password"}]
+      [:button.btn.btn-info "로그인"]]]]))
+
+(defpage [:POST "/login"] {:keys [username password]}
+  (let [users (-> (select user  (where (= :username username))))]
+    (if (empty? users)
+      (throw (java.lang.Exception. "No User Found"))
+      (let [user (-> users (first))]
+        (if (buddy.hashers/check password (:password user))
+          (do (noir.session/put! :session:user user)
+              (noir.response/redirect "/react"))
+          (throw (java.lang.Exception. "Password Not Match!")))))))
+
+(defpage "/logout" []
+  (noir.session/clear!)
+  (noir.response/redirect "/hello"))
+
+    
+    
+;; (buddy.hashers/check password (:password user))
 
 (defpage "/pdf/preview" []
   (common/layout
@@ -48,7 +103,6 @@
                 (-> limit-n nil? not)
                 (limit limit-n))]
   (select query)))
-  
 
 (defpage "/dogs" {:keys [id name limit]}
   (noir.response/json
@@ -144,4 +198,3 @@
            [:td (:id dog)]
            [:td (:name dog)]
            [:td (:description dog)]]))]]]))
-      
